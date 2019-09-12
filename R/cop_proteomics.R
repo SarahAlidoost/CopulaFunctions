@@ -63,6 +63,10 @@ ctrl<-c('log2ratio_L0M0', 'log2ratio_L1M1')
 # select columns with log2 ratios corresponding to treatment conditions
 treat<-log2cols[!(log2cols %in% ctrl)]
 
+# plot the data
+plot(tbl[,c("log2ratio_H1L0", "log2ratio_L1H0")])
+
+#================ starting copula implementations
 # ranking data: empirical probabilities
 tblRn<-pobs(tbl, ties.method = "average") 
 
