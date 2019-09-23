@@ -1,7 +1,7 @@
 # a script to test copulas on the data: ELF_human
 library(RSQLite, quietly = TRUE)
-library(fcros, quietly = TRUE)
-library(devtools, quietly = TRUE)
+#library(fcros, quietly = TRUE)
+#library(devtools, quietly = TRUE)
 library(copula, quietly = TRUE)
 library(VineCopula, quietly = TRUE)
 
@@ -22,14 +22,6 @@ FROM
 WHERE
    A.grp_id = B.grp_id
    AND B.prot_acc = C.acc
-   AND ((", dts, "_L1_M1_H0_norm_ratio_HL > 1
-   AND   ", dts, "_L1_M1_H0_norm_ratio_HM > 1
-   AND   ", dts, "_L0_M0_H1_norm_ratio_LH > 1
-   AND   ", dts, "_L0_M0_H1_norm_ratio_MH > 1)
-   OR   (", dts, "_L1_M1_H0_norm_ratio_LH > 1
-   AND   ", dts, "_L1_M1_H0_norm_ratio_MH > 1
-   AND   ", dts, "_L0_M0_H1_norm_ratio_HL > 1
-   AND   ", dts, "_L0_M0_H1_norm_ratio_HM > 1))
 GROUP BY A.grp_id")
 
 # fetch data from db
@@ -49,9 +41,6 @@ skipcols<-c('grp_id', 'genes')
 
 # dynamically generate column names with log2ratio_* prefix
 rcols<-names(tbl)[!(names(tbl) %in% skipcols)] # select columns with SILAC ratios
-
-# dynamically generate column names with log2ratio_* prefix
-rcols<-names(tbl)[!(names(tbl) %in% skipcols)] # select columns with SILAC ratios
 log2cols<-paste0('log2', rcols)
 
 # log2-transform SILAC ratios, append new columns to the table
@@ -65,7 +54,6 @@ treat<-log2cols[!(log2cols %in% ctrl)]
 
 # plot the data
 plot(tbl[,c("log2ratio_H1L0", "log2ratio_L1H0")])
-
 #================ starting copula implementations
 # ranking data: empirical probabilities
 tblRn<-pobs(tbl, ties.method = "average") 
