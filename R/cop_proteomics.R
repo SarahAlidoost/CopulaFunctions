@@ -52,19 +52,29 @@ ctrl<-c('log2ratio_L0M0', 'log2ratio_L1M1')
 # select columns with log2 ratios corresponding to treatment conditions
 treat<-log2cols[!(log2cols %in% ctrl)]
 
-# plot the data
-plot(tbl[,c("log2ratio_H1L0", "log2ratio_L1H0")])
+# plot the data   
+plot(tbl[,c("ratio_H1L0", "ratio_L1H0")])
+
 #================ starting copula implementations
 # ranking data: empirical probabilities
-tblRn<-pobs(tbl, ties.method = "average") 
+tblRn<-pobs(tbl, ties.method = "average")
+# example: plot empirical probabilities for one variable
+plot(tbl[,c("ratio_H1L0")], tblRn[,c("ratio_H1L0")])
 
-# selecting two variables: ratio_L1H0 and ratio_H1M0
-u1<-c(2)
-u2<-c(3)
-plot(tblRn[,treat[u1:u2]])
+# selecting two variables
+u1u2 <- tblRn[,c("ratio_H1M0", "ratio_M1H0")]
+# example: plot two variables
+plot(u1u2)
 
 # correlations and bivariate copula
-tblTau<-cor(tblRn[,rcols[u1:u2]], use ="everything", method ="kendall") # kendall correlation
-tblrho<-cor(tblRn[,rcols[u1:u2]], use ="everything", method ="pearson")
-tblCop<-BiCopSelect(tblRn[,rcols[u1]], tblRn[,rcols[u2]], familyset = c(1:5), selectioncrit = "AIC", indeptest = T, rotations = F)
+tblTau<-cor(u1u2, use ="complete.obs", method ="kendall") # kendall correlation
+tblRho<-cor(u1u2, use ="complete.obs", method ="pearson")
+BiCop<-BiCopSelect(u1u2[,1], u1u2[,2], familyset = c(1:6), selectioncrit = "AIC", indeptest = T, rotations = T)
+
+# example: plot cdf and pdf probabilities
+CopFam <- copulaFromFamilyIndex(BiCop$family, BiCop$par, BiCop$par2)
+persp(CopFam, pCopula)
+persp(CopFam, dCopula)
+
+
 
